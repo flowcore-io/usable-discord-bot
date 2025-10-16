@@ -1,45 +1,36 @@
-# Use Bun's official Docker image
+# use the official Bun image
+# see all versions at https://hub.docker.com/r/oven/bun/tags
 FROM oven/bun:1 AS base
+WORKDIR /usr/src/app
 
-WORKDIR /app
-
-# Install dependencies
+# install dependencies into temp directory
+# this will cache them and speed up future builds
 FROM base AS install
+RUN mkdir -p /temp/dev
+COPY package.json bun.lockb /temp/dev/
+RUN cd /temp/dev && bun install --frozen-lockfile
 
-# Copy package files
-COPY package.json bun.lockb* ./
+# install with --production (exclude devDependencies)
+RUN mkdir -p /temp/prod
+COPY package.json bun.lockb /temp/prod/
+RUN cd /temp/prod && bun install --frozen-lockfile --production
 
-# Install dependencies
-RUN bun install --frozen-lockfile --production
-
-# Production stage
-FROM base AS release
-
-WORKDIR /app
-
-# Copy dependencies from install stage
-COPY --from=install /app/node_modules ./node_modules
-
-# Copy source code
+# copy node_modules from temp directory
+# then copy all (non-ignored) project files into the image
+FROM base AS prerelease
+COPY --from=install /temp/dev/node_modules node_modules
 COPY . .
 
-# Create non-root user
-RUN addgroup -g 1001 -S bunuser && \
-    adduser -S bunuser -u 1001
+# [optional] tests & build
+ENV NODE_ENV=production
 
-# Change ownership
-RUN chown -R bunuser:bunuser /app
+# copy production dependencies and source code into final image
+FROM oven/bun:1-distroless AS release
+WORKDIR /usr/src/app
+COPY --from=install /temp/prod/node_modules node_modules
+COPY --from=prerelease /usr/src/app/src src
+COPY --from=prerelease /usr/src/app/package.json .
+COPY --from=prerelease /usr/src/app/tsconfig.json .
 
-# Switch to non-root user
-USER bunuser
-
-# Expose port (if needed for health checks)
-EXPOSE 3000
-
-# Health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD bun run --eval "console.log('healthy')" || exit 1
-
-# Start the bot
-CMD ["bun", "run", "src/index.ts"]
-
+# run the app
+ENTRYPOINT [ "bun", "run", "src/index.ts" ]
