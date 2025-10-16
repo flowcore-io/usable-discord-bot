@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.4](https://github.com/flowcore-io/usable-discord-bot/compare/v1.0.3...v1.0.4) (2025-10-16)
+
+
+### Bug Fixes
+
+* added health check ([b540083](https://github.com/flowcore-io/usable-discord-bot/commit/b5400835b91a42909e46be6ab982044ab51f3270))
+
 ## [1.0.3](https://github.com/flowcore-io/usable-discord-bot/compare/v1.0.2...v1.0.3) (2025-10-16)
 
 
