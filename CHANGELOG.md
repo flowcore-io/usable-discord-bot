@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/flowcore-io/usable-discord-bot/compare/v1.0.5...v1.1.0) (2025-10-16)
+
+
+### Features
+
+* enhance fragment handling with real-time updates and conversation tracking ([5c5d5b4](https://github.com/flowcore-io/usable-discord-bot/commit/5c5d5b49a9890cd757c7fdefd8202e82770bffe9))
+
 ## [1.0.5](https://github.com/flowcore-io/usable-discord-bot/compare/v1.0.4...v1.0.5) (2025-10-16)
 
 
