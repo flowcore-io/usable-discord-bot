@@ -1,0 +1,21 @@
+# Bun configuration file
+# https://bun.sh/docs/runtime/bunfig
+
+[install]
+# Configure package installation
+cache = true
+exact = true
+production = false
+
+[install.scopes]
+# Optional: Configure scoped registries
+
+[test]
+# Test configuration
+preload = ["./setup.ts"]
+
+[run]
+# Runtime configuration
+bun = true
+silent = false
+

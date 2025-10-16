@@ -1,0 +1,43 @@
+{
+  "name": "usable-discord-bot",
+  "version": "1.0.0",
+  "description": "Discord bot that creates Usable memory fragments from forum posts",
+  "main": "src/index.ts",
+  "type": "module",
+  "scripts": {
+    "dev": "bun --watch src/index.ts",
+    "start": "bun run src/index.ts",
+    "build": "bun build src/index.ts --outdir dist --target bun",
+    "lint": "biome check src",
+    "lint:fix": "biome check --write src",
+    "format": "biome format --write src",
+    "check": "biome check --write src",
+    "type-check": "tsc --noEmit"
+  },
+  "keywords": [
+    "discord",
+    "bot",
+    "usable",
+    "integration",
+    "workflow-automation",
+    "bun"
+  ],
+  "author": "Flowcore",
+  "license": "MIT",
+  "dependencies": {
+    "discord.js": "^14.16.3",
+    "axios": "^1.7.7",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^22.8.4",
+    "@biomejs/biome": "^1.9.4",
+    "typescript": "^5.6.3"
+  },
+  "trustedDependencies": [
+    "@discordjs/opus",
+    "bufferutil",
+    "utf-8-validate"
+  ]
+}
+
