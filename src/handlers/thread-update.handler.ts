@@ -1,7 +1,7 @@
 /**
  * 🏷️ Thread Update Handler
  *
- * Syncs Discord forum changes to Usable fragments.
+ * Syncs Discord forum changes to Usable fragments in real-time.
  *
  * Flow:
  * 1. Check if it's a tracked forum thread
@@ -16,9 +16,6 @@
  *
  * Tag Format: Discord tags are prefixed with `discord-tag:` to distinguish
  * them from other Usable tags. Example: `discord-tag:urgent`
- *
- * Current Status: Update attempts will fail with API 500 error until
- * the server-side bug is fixed. But the detection works perfectly!
  */
 
 import type { ThreadChannel } from 'discord.js';
@@ -114,8 +111,7 @@ export async function handleThreadUpdate(
       });
     }
 
-    // Update the fragment (will fail with 500 until REST API is fixed)
-    // But we'll try anyway and log the attempt
+    // Update the fragment in Usable
     const success = await usableApiService.updateFragment(updatePayload);
 
     if (success) {
@@ -125,7 +121,7 @@ export async function handleThreadUpdate(
         changes,
       });
     } else {
-      logger.warn('Failed to sync thread update to Usable (REST API issue)', {
+      logger.error('Failed to sync thread update to Usable', {
         threadId: newThread.id,
         fragmentId,
         changes,

@@ -11,15 +11,17 @@ Discord.
 
 - 🎯 **Automatic Fragment Creation**: Converts forum thread posts into Usable
   memory fragments
-- 📝 **Rich Metadata**: Captures Discord context (server, channel, thread,
-  author)
-- 🏷️ **Smart Tagging**: Auto-generates tags based on Discord context
+- 🔄 **Real-time Updates**: Automatically updates fragments when replies are
+  added to Discord threads
+- 🏷️ **Smart Tag Syncing**: Discord forum tags sync to Usable in real-time
+- 📝 **Full Conversation Tracking**: Captures entire thread conversations with
+  timestamps and authors
 - ✅ **Instant Feedback**: Notifies users with fragment ID upon creation
-- 🔄 **Real-time Monitoring**: Watches forum channels for new threads
+- 🗄️ **Database-Free Design**: Uses Discord messages as storage (no external DB
+  needed!)
 - 🛡️ **Type Safety**: Built with TypeScript for robust error handling
 - 📊 **Structured Logging**: Comprehensive logging for debugging and monitoring
-- 🏥 **Health Checks**: Built-in HTTP endpoints for Kubernetes liveness and
-  readiness probes
+- ⚙️ **Flexible Configuration**: JSON-based forum-to-fragment-type mapping
 
 ## Architecture
 
@@ -29,13 +31,13 @@ src/
 │   └── env.ts              # Environment configuration with Zod validation
 ├── handlers/
 │   ├── ready.handler.ts    # Bot ready event handler
-│   ├── thread-create.handler.ts  # Forum thread creation handler
-│   └── message-create.handler.ts # Message handling (future: updates)
+│   ├── thread-create.handler.ts  # Forum thread → Create fragment
+│   ├── thread-update.handler.ts  # Tags/title changes → Update fragment
+│   └── message-create.handler.ts # New replies → Update fragment
 ├── services/
-│   ├── health.service.ts   # HTTP health check endpoints for K8s
-│   └── usable-api.service.ts     # Usable API integration
+│   └── usable-api.service.ts     # Usable REST API integration
 ├── types/
-│   ├── discord.ts          # Discord-related types
+│   ├── discord.ts          # Discord-related types & constants
 │   └── usable.ts           # Usable API types
 ├── utils/
 │   └── logger.ts           # Structured logging utility
