@@ -1,3 +1,4 @@
 {
-	"tagPath": "flowcore-microservices.deployments.usableDiscordBot.deployment.tag"
+	"tagPath": "flowcore-microservices.deployments.usableDiscordBot.deployment.tag",
+	"repository": "flowcore-io/public-customer-sites-manifests"
 }
