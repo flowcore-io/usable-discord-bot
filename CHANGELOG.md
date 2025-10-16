@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.2](https://github.com/flowcore-io/usable-discord-bot/compare/v1.0.1...v1.0.2) (2025-10-16)
+
+
+### Bug Fixes
+
+* fixed issue with dockerfile ([1a13bad](https://github.com/flowcore-io/usable-discord-bot/commit/1a13bad67bf665982d1c6f245546d465671d3097))
+
 ## [1.0.1](https://github.com/flowcore-io/usable-discord-bot/compare/v1.0.0...v1.0.1) (2025-10-16)
 
 
