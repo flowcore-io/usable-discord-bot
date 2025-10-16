@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.3](https://github.com/flowcore-io/usable-discord-bot/compare/v1.0.2...v1.0.3) (2025-10-16)
+
+
+### Bug Fixes
+
+* added missing repository field in deployment ([6b9ae8a](https://github.com/flowcore-io/usable-discord-bot/commit/6b9ae8a4cd5f95cbc67e96d2b6f1839f6f5c1cb4))
+
 ## [1.0.2](https://github.com/flowcore-io/usable-discord-bot/compare/v1.0.1...v1.0.2) (2025-10-16)
 
 

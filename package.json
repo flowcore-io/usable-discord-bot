@@ -1,6 +1,6 @@
 {
   "name": "usable-discord-bot",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Discord bot that creates Usable memory fragments from forum posts",
   "main": "src/index.ts",
   "type": "module",
