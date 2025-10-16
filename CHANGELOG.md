@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.5](https://github.com/flowcore-io/usable-discord-bot/compare/v1.0.4...v1.0.5) (2025-10-16)
+
+
+### Bug Fixes
+
+* update health check endpoints to support common Kubernetes paths ([253a7e4](https://github.com/flowcore-io/usable-discord-bot/commit/253a7e405fe24c9b9f3acace25501b8fefab2a20))
+
 ## [1.0.4](https://github.com/flowcore-io/usable-discord-bot/compare/v1.0.3...v1.0.4) (2025-10-16)
 
 
