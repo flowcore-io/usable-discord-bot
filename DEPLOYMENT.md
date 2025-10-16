@@ -13,6 +13,7 @@ This guide covers various deployment options for the Usable Discord Bot.
 ## Prerequisites
 
 For all deployment methods:
+
 - Discord bot token and client ID
 - Usable API key and workspace ID
 - Fragment type IDs from Usable workspace
@@ -51,7 +52,8 @@ docker-compose up -d --build
 
 ### GitHub Container Registry
 
-The bot is automatically built and pushed to GitHub Container Registry on every commit to `main`:
+The bot is automatically built and pushed to GitHub Container Registry on every
+commit to `main`:
 
 ```bash
 # Pull the latest image
@@ -131,7 +133,8 @@ worker: npm start
    ```
 
 2. **Create ECS Task Definition**:
-   - Container image: `your-account.dkr.ecr.us-east-1.amazonaws.com/usable-discord-bot:latest`
+   - Container image:
+     `your-account.dkr.ecr.us-east-1.amazonaws.com/usable-discord-bot:latest`
    - Task size: 0.5 vCPU, 1 GB memory
    - Add environment variables
    - Configure CloudWatch logging
@@ -143,7 +146,8 @@ worker: npm start
 
 ### AWS Lambda (Alternative)
 
-For serverless deployment, Lambda isn't ideal for a long-running bot. Consider ECS or EC2.
+For serverless deployment, Lambda isn't ideal for a long-running bot. Consider
+ECS or EC2.
 
 ### AWS EC2
 
@@ -274,14 +278,14 @@ Create `railway.json` for custom configuration:
 
 ```json
 {
-  "build": {
-    "builder": "NIXPACKS"
-  },
-  "deploy": {
-    "startCommand": "npm start",
-    "restartPolicyType": "ON_FAILURE",
-    "restartPolicyMaxRetries": 10
-  }
+   "build": {
+      "builder": "NIXPACKS"
+   },
+   "deploy": {
+      "startCommand": "npm start",
+      "restartPolicyType": "ON_FAILURE",
+      "restartPolicyMaxRetries": 10
+   }
 }
 ```
 
@@ -324,33 +328,115 @@ docker logs --tail 100 usable-discord-bot
 
 ## Health Checks
 
-### Docker Health Check
+The bot includes built-in health check endpoints for Kubernetes and container
+orchestration platforms.
 
-The Dockerfile includes a basic health check. For more robust checks:
+### Health Endpoints
 
-```dockerfile
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD node -e "console.log('healthy')" || exit 1
+The bot exposes two HTTP endpoints on port 3000 (configurable via
+`HEALTH_PORT`):
+
+#### Liveness Probe: `/health/live`
+
+Always returns 200 if the process is running. Use this for Kubernetes liveness
+probes.
+
+```bash
+curl http://localhost:3000/health/live
 ```
 
-### Custom Health Endpoint (Optional)
+Response:
 
-Add an HTTP health endpoint:
+```json
+{
+   "status": "ok",
+   "timestamp": "2025-10-16T12:00:00.000Z"
+}
+```
 
-```typescript
-import express from 'express';
+#### Readiness Probe: `/health/ready`
 
-const app = express();
+Returns 200 only when the Discord bot is connected and ready. Returns 503 if not
+ready.
 
-app.get('/health', (req, res) => {
-  res.status(200).json({
-    status: 'healthy',
-    uptime: process.uptime(),
-    timestamp: new Date().toISOString(),
-  });
-});
+```bash
+curl http://localhost:3000/health/ready
+```
 
-app.listen(3000);
+Response (ready):
+
+```json
+{
+   "status": "ready",
+   "discord_connected": true,
+   "timestamp": "2025-10-16T12:00:00.000Z"
+}
+```
+
+Response (not ready):
+
+```json
+{
+   "status": "not_ready",
+   "discord_connected": false,
+   "timestamp": "2025-10-16T12:00:00.000Z"
+}
+```
+
+### Kubernetes Configuration
+
+Add these probes to your Kubernetes deployment:
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+   name: usable-discord-bot
+spec:
+   template:
+      spec:
+         containers:
+            - name: bot
+              image: ghcr.io/flowcore/usable-discord-bot:latest
+              ports:
+                 - containerPort: 3000
+                   name: http
+              env:
+                 - name: HEALTH_PORT
+                   value: "3000"
+              livenessProbe:
+                 httpGet:
+                    path: /health/live
+                    port: 3000
+                 initialDelaySeconds: 10
+                 periodSeconds: 30
+                 timeoutSeconds: 3
+                 failureThreshold: 3
+              readinessProbe:
+                 httpGet:
+                    path: /health/ready
+                    port: 3000
+                 initialDelaySeconds: 5
+                 periodSeconds: 10
+                 timeoutSeconds: 3
+                 failureThreshold: 3
+```
+
+### Docker Health Check
+
+Update your Dockerfile with a proper HTTP health check:
+
+```dockerfile
+HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
+  CMD curl -f http://localhost:3000/health/live || exit 1
+```
+
+### Environment Variables
+
+Configure the health check port (defaults to 3000):
+
+```bash
+HEALTH_PORT=3000  # Optional, defaults to 3000
 ```
 
 ## Scaling
@@ -374,6 +460,7 @@ The bot is designed to run as a single instance. For high-volume servers:
 ### Environment Variables Backup
 
 Store environment variables securely:
+
 - Use a password manager (1Password, LastPass)
 - Store in secure cloud storage (encrypted)
 - Use secret management (AWS Secrets Manager, HashiCorp Vault)
@@ -381,6 +468,7 @@ Store environment variables securely:
 ### Data Backup
 
 If using a database:
+
 - Set up automated backups
 - Test restore procedures
 - Store backups in multiple locations
@@ -417,17 +505,18 @@ If using a database:
 
 ## Cost Estimates
 
-| Platform | Monthly Cost | Notes |
-|----------|--------------|-------|
-| VPS (DigitalOcean) | $5-10 | Basic droplet |
-| Railway | $5 | Free tier available |
-| Heroku | $7 | Eco dyno |
-| AWS ECS | $10-15 | Fargate, minimal usage |
-| AWS EC2 | $5-10 | t3.micro instance |
+| Platform           | Monthly Cost | Notes                  |
+| ------------------ | ------------ | ---------------------- |
+| VPS (DigitalOcean) | $5-10        | Basic droplet          |
+| Railway            | $5           | Free tier available    |
+| Heroku             | $7           | Eco dyno               |
+| AWS ECS            | $10-15       | Fargate, minimal usage |
+| AWS EC2            | $5-10        | t3.micro instance      |
 
 ## Support
 
 For deployment issues:
+
 - Check deployment logs
 - Review environment variables
 - Verify network connectivity
@@ -436,4 +525,3 @@ For deployment issues:
 ---
 
 **Happy Deploying! 🚀**
-

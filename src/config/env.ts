@@ -39,6 +39,7 @@ const envSchema = z.object({
   USABLE_WORKSPACE_ID: z.string().uuid('Usable workspace ID must be a valid UUID'),
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
   LOG_LEVEL: z.enum(['error', 'warn', 'info', 'debug']).default('info'),
+  HEALTH_PORT: z.coerce.number().int().positive().default(3000),
 });
 
 // Parse and validate environment variables

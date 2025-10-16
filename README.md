@@ -18,6 +18,8 @@ Discord.
 - 🔄 **Real-time Monitoring**: Watches forum channels for new threads
 - 🛡️ **Type Safety**: Built with TypeScript for robust error handling
 - 📊 **Structured Logging**: Comprehensive logging for debugging and monitoring
+- 🏥 **Health Checks**: Built-in HTTP endpoints for Kubernetes liveness and
+  readiness probes
 
 ## Architecture
 
@@ -30,6 +32,7 @@ src/
 │   ├── thread-create.handler.ts  # Forum thread creation handler
 │   └── message-create.handler.ts # Message handling (future: updates)
 ├── services/
+│   ├── health.service.ts   # HTTP health check endpoints for K8s
 │   └── usable-api.service.ts     # Usable API integration
 ├── types/
 │   ├── discord.ts          # Discord-related types
@@ -207,17 +210,17 @@ CORS errors? **Author:** username **Posted:** 2025-10-15T19:00:00.000Z
 
 ### Environment Variables
 
-| Variable                          | Description                              | Required | Default                      |
-| --------------------------------- | ---------------------------------------- | -------- | ---------------------------- |
-| `DISCORD_BOT_TOKEN`               | Discord bot authentication token         | Yes      | -                            |
-| `DISCORD_CLIENT_ID`               | Discord application client ID            | Yes      | -                            |
-| `USABLE_API_URL`                  | Usable API base URL                      | No       | `https://api.usable.dev/api` |
-| `USABLE_API_KEY`                  | Usable API authentication key            | Yes      | -                            |
-| `USABLE_WORKSPACE_ID`             | Target Usable workspace UUID             | Yes      | -                            |
-| `USABLE_ISSUE_FRAGMENT_TYPE_ID`   | Fragment type for issues                 | Yes      | -                            |
-| `USABLE_FEATURE_FRAGMENT_TYPE_ID` | Fragment type for feature requests       | No       | -                            |
-| `NODE_ENV`                        | Node environment                         | No       | `development`                |
-| `LOG_LEVEL`                       | Logging level (error, warn, info, debug) | No       | `info`                       |
+| Variable                 | Description                                      | Required | Default                      |
+| ------------------------ | ------------------------------------------------ | -------- | ---------------------------- |
+| `DISCORD_BOT_TOKEN`      | Discord bot authentication token                 | Yes      | -                            |
+| `DISCORD_CLIENT_ID`      | Discord application client ID                    | Yes      | -                            |
+| `DISCORD_FORUM_MAPPINGS` | JSON mapping of forum IDs to fragment type UUIDs | Yes      | -                            |
+| `USABLE_API_URL`         | Usable API base URL                              | No       | `https://api.usable.dev/api` |
+| `USABLE_API_KEY`         | Usable API authentication key                    | Yes      | -                            |
+| `USABLE_WORKSPACE_ID`    | Target Usable workspace UUID                     | Yes      | -                            |
+| `NODE_ENV`               | Node environment                                 | No       | `development`                |
+| `LOG_LEVEL`              | Logging level (error, warn, info, debug)         | No       | `info`                       |
+| `HEALTH_PORT`            | HTTP port for Kubernetes health check endpoints  | No       | `3000`                       |
 
 ### Log Levels
 

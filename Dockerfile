@@ -32,5 +32,12 @@ COPY --from=prerelease /usr/src/app/src src
 COPY --from=prerelease /usr/src/app/package.json .
 COPY --from=prerelease /usr/src/app/tsconfig.json .
 
+# Expose health check port
+EXPOSE 3000
+
+# Note: Distroless images don't include curl for HEALTHCHECK.
+# Use Kubernetes HTTP probes instead (see DEPLOYMENT.md).
+# If you need Docker HEALTHCHECK, use oven/bun:1-slim instead of distroless.
+
 # run the app
 ENTRYPOINT [ "bun", "run", "src/index.ts" ]

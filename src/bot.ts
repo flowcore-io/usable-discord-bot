@@ -114,4 +114,11 @@ export class DiscordBot {
     this.client.destroy();
     logger.info('Discord bot stopped');
   }
+
+  /**
+   * Get the Discord client instance (for health checks)
+   */
+  getClient(): Client {
+    return this.client;
+  }
 }
