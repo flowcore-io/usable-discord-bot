@@ -2,8 +2,7 @@
  * 🏥 Health Check Service
  *
  * Provides HTTP endpoints for Kubernetes health checks:
- * - /health/live  → Liveness probe (process is alive)
- * - /health/ready → Readiness probe (Discord bot is connected)
+ * - /health or /api/health → Liveness probe (process is alive)
  *
  * Runs on port 3000 to satisfy K8s probe requirements
  */
@@ -43,8 +42,9 @@ export class HealthService {
       fetch: (req) => {
         const url = new URL(req.url);
 
-        // Liveness probe - always returns 200 if process is running
-        if (url.pathname === '/health/live') {
+        // Liveness probes - always return 200 if process is running
+        // Support common Kubernetes health check paths
+        if (url.pathname === '/health' || url.pathname === '/api/health') {
           return new Response(
             JSON.stringify({
               status: 'ok',
@@ -57,8 +57,8 @@ export class HealthService {
           );
         }
 
-        // Readiness probe - returns 200 only if Discord bot is connected
-        if (url.pathname === '/health/ready') {
+        // Readiness probes - return 200 only if Discord bot is connected
+        if (url.pathname === '/health' || url.pathname === '/api/health') {
           const ready = this.isReady();
           return new Response(
             JSON.stringify({
@@ -79,8 +79,8 @@ export class HealthService {
     });
 
     logger.info(`Health check server started on port ${this.port}`, {
-      liveness_endpoint: '/health/live',
-      readiness_endpoint: '/health/ready',
+      liveness_endpoints: '/health, api/health',
+      readiness_endpoints: '/health, api/health',
     });
   }
 
