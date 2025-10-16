@@ -2,14 +2,13 @@ name: Build and Deploy to Production
 
 on:
   release:
-    types: [ published ]
+    types: [published]
 
 permissions:
   id-token: write
   contents: read
 
 jobs:
-
   extract_info:
     runs-on: ubuntu-latest
 
@@ -19,7 +18,7 @@ jobs:
         uses: sergeysova/jq-action@v2
         id: version
         with:
-          cmd: 'jq .version package.json -r'
+          cmd: "jq .version package.json -r"
 
       - name: Show my version
         run: 'echo "version ${{ steps.version.outputs.value }}"'
@@ -28,7 +27,7 @@ jobs:
         uses: sergeysova/jq-action@v2
         id: package
         with:
-          cmd: 'jq .name package.json -r'
+          cmd: "jq .name package.json -r"
 
       - name: Show package name
         run: 'echo "version ${{ steps.package.outputs.value }}"'
@@ -37,7 +36,7 @@ jobs:
         uses: sergeysova/jq-action@v2
         id: tagPath
         with:
-          cmd: 'jq .tagPath flowcore.deployment.json -r'
+          cmd: "jq .tagPath flowcore.deployment.json -r"
 
       - name: Show Manifest Tag Path
         run: 'echo "tagPath ${{ steps.tagPath.outputs.value }}"'
@@ -46,7 +45,7 @@ jobs:
         uses: sergeysova/jq-action@v2
         id: repository
         with:
-          cmd: 'jq .repository flowcore.deployment.json -r'
+          cmd: "jq .repository flowcore.deployment.json -r"
 
       - name: Show Manifest Repository
         run: 'echo "repository ${{ steps.repository.outputs.value }}"'

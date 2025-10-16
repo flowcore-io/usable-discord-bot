@@ -13,7 +13,7 @@ jobs:
         uses: sergeysova/jq-action@v2
         id: package
         with:
-          cmd: 'jq .name package.json -r'
+          cmd: "jq .name package.json -r"
 
       - name: Show package name
         run: 'echo "version ${{ steps.package.outputs.value }}"'
