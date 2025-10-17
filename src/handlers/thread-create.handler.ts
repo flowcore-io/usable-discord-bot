@@ -19,6 +19,7 @@ import type { Message, ThreadChannel } from 'discord.js';
 import { env, getFragmentTypeForForum, isForumTracked } from '../config/env.js';
 import { usableApiService } from '../services/usable-api.service.js';
 import { GUILD_FORUM } from '../types/discord.js';
+import { retryDiscordApi } from '../utils/discord-retry.js';
 import { logger } from '../utils/logger.js';
 
 /**
@@ -122,24 +123,20 @@ export async function handleThreadCreate(thread: ThreadChannel): Promise<void> {
 }
 
 /**
- * Fetch the starter message of a thread
+ * Fetch the starter message of a thread with retry logic
+ *
+ * Discord's API sometimes returns 404 for starter messages due to eventual consistency.
+ * We use exponential backoff retry to handle this gracefully.
  */
 async function fetchStarterMessage(thread: ThreadChannel): Promise<Message | null> {
-  try {
-    // For forum threads, the starter message has the same ID as the thread
-    if (thread.parent?.type === GUILD_FORUM) {
-      const starterMessage = await thread.fetchStarterMessage();
-      return starterMessage;
-    }
-
-    // Fallback: fetch the first message
-    const messages = await thread.messages.fetch({ limit: 1 });
-    return messages.first() || null;
-  } catch (error) {
-    logger.error('Error fetching starter message', {
-      error,
-      threadId: thread.id,
+  // For forum threads, use the fetchStarterMessage API with retry
+  if (thread.parent?.type === GUILD_FORUM) {
+    return retryDiscordApi(() => thread.fetchStarterMessage(), {
+      context: thread.id,
     });
-    return null;
   }
+
+  // Fallback: fetch the first message for non-forum threads
+  const messages = await thread.messages.fetch({ limit: 1 });
+  return messages.first() || null;
 }
