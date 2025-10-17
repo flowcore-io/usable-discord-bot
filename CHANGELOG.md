@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.2.0](https://github.com/flowcore-io/usable-discord-bot/compare/v1.1.0...v1.2.0) (2025-10-17)
+
+
+### Features
+
+* implement slash command registration and interaction handling ([caea383](https://github.com/flowcore-io/usable-discord-bot/commit/caea383f69936a1e7c4c259b14ddf48d8a084498))
+
+
+### Bug Fixes
+
+* add retry logic for Discord API calls and improve thread message fetching ([f46b6ab](https://github.com/flowcore-io/usable-discord-bot/commit/f46b6ab3f70003b5074c1e1348c7911341fa16c3))
+
 ## [1.1.0](https://github.com/flowcore-io/usable-discord-bot/compare/v1.0.5...v1.1.0) (2025-10-16)
 
 
