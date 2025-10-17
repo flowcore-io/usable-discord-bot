@@ -12,7 +12,9 @@
  */
 
 import { Client, Events, GatewayIntentBits } from 'discord.js';
+import { registerSlashCommands } from './commands/register.js';
 import { env } from './config/env.js';
+import { handleInteractionCreate } from './handlers/interaction-create.handler.js';
 import { handleMessageCreate } from './handlers/message-create.handler.js';
 import { handleReady } from './handlers/ready.handler.js';
 import { handleThreadCreate } from './handlers/thread-create.handler.js';
@@ -37,18 +39,26 @@ export class DiscordBot {
   /**
    * Register all event handlers
    *
-   * This is where the magic happens! We listen to 3 key Discord events:
+   * This is where the magic happens! We listen to key Discord events:
    *
-   * 1. ThreadCreate  → New forum post → Create Usable fragment
-   * 2. ThreadUpdate  → Tags/title change → Sync to Usable
-   * 3. MessageCreate → Reply added → Update fragment (when API is fixed)
+   * 1. ThreadCreate     → New forum post → Create Usable fragment
+   * 2. ThreadUpdate     → Tags/title change → Sync to Usable
+   * 3. MessageCreate    → Reply added → Update fragment (when API is fixed)
+   * 4. InteractionCreate → Slash commands → Manual sync operations
    *
    * Each handler is independent - no shared state, easy to test!
    */
   private registerEventHandlers(): void {
     // Ready event - fires once when bot successfully connects
-    this.client.once(Events.ClientReady, (client) => {
+    this.client.once(Events.ClientReady, async (client) => {
       handleReady(client);
+
+      // Register slash commands after bot is ready
+      try {
+        await registerSlashCommands();
+      } catch (error) {
+        logger.error('Failed to register slash commands', { error });
+      }
     });
 
     // Thread create event - fires when a new forum thread is created
@@ -67,6 +77,12 @@ export class DiscordBot {
     // Tracks replies for fragment updates (database-free tracking!)
     this.client.on(Events.MessageCreate, async (message) => {
       await handleMessageCreate(message);
+    });
+
+    // Interaction create event - fires when a slash command is used
+    // Allows moderators to manually trigger sync operations
+    this.client.on(Events.InteractionCreate, async (interaction) => {
+      await handleInteractionCreate(interaction);
     });
 
     // Error handling
